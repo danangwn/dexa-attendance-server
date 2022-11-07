@@ -38,8 +38,8 @@ export class UserService {
           firstName: params.firstName,
           middleName: params.middleName,
           lastName: params.lastName,
-          gender: params.gender,
-          isAdmin: params.isAdmin,
+          gender: params.gender ? 1 : 0,
+          isAdmin: params.isAdmin && params.isAdmin === '1' ? 1 : 0,
           createdDate: currentTime,
           modifiedDate: currentTime,
           createdBy: 'admin',
@@ -47,7 +47,7 @@ export class UserService {
         })
         .execute(); 
 
-        message = `Register Success. Please check your email.`; 
+        message = `Register Success`; 
       }
       return message;
     } catch (e) {
@@ -120,9 +120,36 @@ export class UserService {
     }
   }
 
-  async listing(){
+  async listing(auth: Auth){
     try {
-      return await User.createQueryBuilder('user').getMany();
+      const res: any[] = [];
+      let get: User[];
+
+      if (auth.userdata.isAdmin) {
+        get = await User.createQueryBuilder('user').getMany();
+      } else {
+        get = await User.createQueryBuilder('user')
+        .where('user.userId = :userId', { userId: auth.userdata.userId })
+        .getMany();
+      }
+
+      if (get && get.length > 0) {
+        for (let i = 0; i < get.length; i++ ) {
+          const pushData = {
+            index: i + 1,
+            userId: get[i].userId,
+            empName: `${get[i].firstName}` + ` ${get[i].middleName ? get[i].middleName : ''}` + ` ${get[i].lastName ? get[i].lastName : ''}`,
+            empNo: get[i].empNo,
+            username: get[i].userName,
+            email: get[i].email,
+            gender: get[i].gender ? 'Male' : 'Female',
+            role: get[i].isAdmin ? 'Admin' : 'Employee',
+          };
+
+          res.push(pushData);
+        }
+      }
+      return res;
     } catch (e) {
       throw e;
     }
@@ -146,17 +173,14 @@ export class UserService {
       .getOne();
       if (user) {
         await User.createQueryBuilder()
-        .where('user.userId = :userId', { userId: user.userId })
+        .where('userId = :userId', { userId: user.userId })
         .update()
         .set({
-          userName: params.userName,
           email: params.email,
           empNo: params.empNo,
           firstName: params.firstName,
           middleName: params.middleName,
           lastName: params.lastName,
-          gender: params.gender,
-          isAdmin: params.isAdmin,
           modifiedDate: currentTime,
           modifiedBy: auth.userdata.userName,
         })
@@ -168,10 +192,10 @@ export class UserService {
     }
   }
 
-  async profile(auth: Auth) {
+  async profile(auth: Auth, userId: number) {
     try {
       return await User.createQueryBuilder('user')
-      .where('user.userId = :userId', { userId: auth.userdata.userId })
+      .where('user.userId = :userId', { userId: userId })
       .getOne();
     } catch(e) {
       throw e;

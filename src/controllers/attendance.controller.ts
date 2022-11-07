@@ -21,6 +21,17 @@ export class AttendanceController {
     }
   }
 
+  @Get('todayAttendance')
+  async todayAttendance(@Req() req) {
+    try {
+      const auth: Auth = req.auth;
+      const result =  await this.attendanceService.getAttToday(auth);
+      return response('Get Data', result);
+    } catch (e) {
+      return responseError(e.message, HttpStatus.UNAUTHORIZED);
+    }
+  }
+
   @Get('listingAll')
   async listingAll() {
     try {
@@ -35,6 +46,8 @@ export class AttendanceController {
   async clockIn(@Req() req, @Body() body: any) {
     try {
         const auth: Auth = req.auth;
+        console.log('auth', auth);
+        console.log('clockIn', body);
         const result = await this.attendanceService.recordAttendanceIn(auth, body);
         return response('Success Clock In', result);
     } catch (e) {

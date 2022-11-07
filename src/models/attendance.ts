@@ -1,4 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "./user";
 
 @Entity('attendance')
 export class Attendance extends BaseEntity {
@@ -26,4 +27,6 @@ export class Attendance extends BaseEntity {
 
     @Column({ name: 'modified_date' })
     modifiedDate: Date;
+
+    user: User;
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post, Query, Req, Res } from '@nestjs/common';
 import { createPaginationOptions } from 'src/helpers/pagination.helper';
 import { responseError, response } from '../helpers/response.helper';
 import { Auth } from '../interfaces/auth.dto';
@@ -45,10 +45,11 @@ export class UserController {
   }
 
   @Get('profile')
-  async profile(@Req() req) {
+  async profile(@Req() req, @Query() params) {
     try {
       const auth: Auth = req.auth;
-      const res = await this.userService.profile(auth);
+      const userId = params.userId ? params.userId : auth.userdata.userId;
+      const res = await this.userService.profile(auth, userId);
       return response('Get Data', res);
     } catch (e) {
       return responseError(e.message, HttpStatus.UNAUTHORIZED);
@@ -56,9 +57,10 @@ export class UserController {
   }
 
   @Get('listing')
-  async listing() {
+  async listing(@Req() req) {
     try {
-      const result =  await this.userService.listing();
+      const auth: Auth = req.auth;
+      const result =  await this.userService.listing(auth);
       return response('Get Data', result);
     } catch (e) {
       return responseError(e.message, HttpStatus.UNAUTHORIZED);
@@ -81,7 +83,7 @@ export class UserController {
     try {
         const auth: Auth = req.auth;
         const result = await this.userService.update(auth, body);
-        return response('Success Clock In', result);
+        return response('Success Update User', result);
     } catch (e) {
       return responseError(e.message, HttpStatus.UNPROCESSABLE_ENTITY);
     }

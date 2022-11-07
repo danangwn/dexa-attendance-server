@@ -14,7 +14,7 @@ export class RegisterDTO {
   middleName: string;
   lastName: string;
   gender: number;
-  isAdmin: number;
+  isAdmin: string;
 }
 
 export interface ActivationDTO {

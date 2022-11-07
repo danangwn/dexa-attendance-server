@@ -1,0 +1,184 @@
+FORMAT: 1A
+HOST: localhost:3030
+
+# Dexa Technical Test API Documentation
+
+# Group User
+# POST /users/login
+API Login 
++ Request (application/json)
+    + Body 
+        username (string)
+        password (string)
++ Response 200 (application/json)
+    message: 'Succces login',
+    data: {
+        token (token),
+        user: (user),
+    }
+
+# POST /users/logout
+API logout
++ Request (application/json)
+    + Headers
+
+        Authorization: {TOKEN}
+
++ Response 200 (application/json)
+    message: 'Success logout'
+
+# POST /users/register
+API Register New User 
++ Request (application/json)
+    + Body 
+        userName (string)
+        empNo (string)
+        firstName (string)
+        middleName (string)
+        lastName (string)
+        isAdmin (string)
+        password (string)
+        email (string)
++ Response 200 (application/json)
+    message = `Register Success`; 
+
+# GET /users/profile
+API to get user profile
++ Parameters
+    + userId (number, optional)
++ Request (application/json)
+    + Headers
+
+        Authorization: {TOKEN}
+
++ Response 200 (application/json)
+    {
+        message: 'Get Data',
+        data (user)
+    }
+
+# GET /users/listing
+API to get all user listing
+
++ Request (application/json)
+    + Headers
+
+        Authorization: {TOKEN}
+
++ Response 200 (application/json)
+    {
+        message: 'Get Data',
+        data (user[])
+    }
+
+
+# GET /users/delete
+API to delete user data
++ Parameters
+    + userId (number)
++ Request (application/json)
+    + Headers
+
+        Authorization: {TOKEN}
+
++ Response 200 (application/json)
+    {
+        message: 'Success Delete User'
+    }
+
+
+# POST /users/update
+API to update user data
++ Request (application/json)
+    + Body 
+        empNo (string)
+        firstName (string)
+        middleName (string)
+        lastName (string)
+        email (string)
++ Response 200 (application/json)
+    message = `Success Update User`; 
+
+
+# Group Attendance
+# GET /attendance/listing
+API get attendance data listing
++ Request (application/json)
+    + Headers
+
+        Authorization: {TOKEN}
+
++ Response 200 (application/json)
+    {
+        message: 'Get Data',
+        data: [
+            {
+                index (number)
+                empName (string)
+                empNo (string)
+                date (string)
+                clockIn (string)
+                clockOut (string)
+                latLong (string)
+                photo (string)
+            }
+        ]
+    }
+
+# GET /attendance/todayAttendance
+API get user today attendance data
++ Request (application/json)
+    + Headers
+
+        Authorization: {TOKEN}
+
++ Response 200 (application/json)
+    {
+        message: 'Get Data',
+        data: {
+            clockIn (string)
+            clockOut (string)
+        }
+    }
+
+# GET /attendance/listingAll
+API get attendance data listing of all employee
++ Request (application/json)
+    + Headers
+
+        Authorization: {TOKEN}
+
++ Response 200 (application/json)
+    {
+        message: 'Get Data',
+        data: [
+            {
+                index (number)
+                empName (string)
+                empNo (string)
+                date (string)
+                clockIn (string)
+                clockOut (string)
+                latLong (string)
+                photo (string)
+            }
+        ]
+    }
+
+# POST /attendance/clockIn
+API to record IN time
++ Request (application/json)
+    + Body 
+        latLong (string),
+        photo (string),
++ Response 200 (application/json)
+    message = `Success Clock In`; 
+
+# POST /attendance/clockOut
+API to record OUT time
++ Request (application/json)
+    + Body 
+        latLong (string),
+        photo (string),
++ Response 200 (application/json)
+    message = `Success Clock Out`; 
